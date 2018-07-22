@@ -1,16 +1,31 @@
 version: 2
 jobs:
-  test_nuxt:
+  build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:8.9-browsers
+      - image: circleci/node:8-browsers
 
     working_directory: ~/repo/nuxt.js
 
     steps:
       - checkout
           path: ~/repo
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
       - run: git submodule sync
+
       - run: git submodule update --init
+
       - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
       - run: yarn test
