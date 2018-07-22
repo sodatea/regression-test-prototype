@@ -6,13 +6,15 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: |
-        git submodule sync
-        git submodule update --init
-        cd vue
-        yarn
-        yarn build
-        yarn link
+      - run:
+          name: init
+          command: |
+            git submodule sync
+            git submodule update --init
+            cd vue
+            yarn
+            yarn build
+            yarn link
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -32,6 +34,7 @@ jobs:
 
       # TODO: get version tag automatically or make it configurable
       - run: git checkout v1.4.1
+      - run: yarn link vue
 
       - restore_cache:
           keys:
@@ -59,6 +62,7 @@ jobs:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: git checkout v2.4.4
+      - run: yarn link vue
 
       - restore_cache:
           keys:
