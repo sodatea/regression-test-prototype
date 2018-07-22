@@ -2,10 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:8-browsers
 
-    working_directory: ~/repo/nuxt.js
+    working_directory: ~/repo
 
     steps:
       - checkout
@@ -21,11 +20,11 @@ jobs:
 
       - run: git submodule update --init
 
-      - run: yarn install
+      - run: cd nuxt.js && yarn install
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: yarn test
+      - run: cd nuxt.js && yarn test
