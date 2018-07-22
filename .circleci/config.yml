@@ -8,6 +8,10 @@ jobs:
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/repo
 
   nuxt:
     docker:
@@ -17,6 +21,10 @@ jobs:
     working_directory: ~/repo/nuxt.js
 
     steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
       # TODO: get version tag automatically or make it configurable
       - run: git checkout v1.4.1
 
@@ -41,6 +49,10 @@ jobs:
     working_directory: ~/repo/element
 
     steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
       - run: git checkout v2.4.4
 
       - restore_cache:
