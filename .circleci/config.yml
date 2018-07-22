@@ -1,5 +1,14 @@
 version: 2
 jobs:
+  checkout_code:
+    docker:
+      - image: circleci/node:8-browsers
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+
   nuxt:
     docker:
       - image: circleci/node:8-browsers
@@ -8,11 +17,6 @@ jobs:
     working_directory: ~/repo/nuxt.js
 
     steps:
-      - checkout:
-          path: ~/repo
-      - run: git submodule sync
-      - run: git submodule update --init
-
       # TODO: get version tag automatically or make it configurable
       - run: git checkout v1.4.1
 
@@ -37,11 +41,6 @@ jobs:
     working_directory: ~/repo/element
 
     steps:
-      - checkout:
-          path: ~/repo
-      - run: git submodule sync
-      - run: git submodule update --init
-
       - run: git checkout v2.4.4
 
       - restore_cache:
@@ -62,5 +61,9 @@ workflows:
   version: 2
   test_all:
     jobs:
-      - nuxt
-      - element
+      - nuxt:
+          requires:
+            - checkout_code
+      - element:
+          requires:
+            - checkout_code
