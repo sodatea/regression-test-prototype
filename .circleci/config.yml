@@ -14,11 +14,11 @@ jobs:
             cd vue
             yarn
             yarn build
-            yarn link
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/repo
+            - ~/.cache/yarn
 
   nuxt:
     docker:
@@ -31,10 +31,16 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: link
+          command:
+            cd ../vue
+            yarn link
+            cd -
+            yarn link vue
 
       # TODO: get version tag automatically or make it configurable
       - run: git checkout v1.4.1
-      - run: yarn link vue
 
       - restore_cache:
           keys:
@@ -60,9 +66,14 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-
+      - run:
+          name: link
+          command:
+            cd ../vue
+            yarn link
+            cd -
+            yarn link vue
       - run: git checkout v2.4.4
-      - run: yarn link vue
 
       - restore_cache:
           keys:
