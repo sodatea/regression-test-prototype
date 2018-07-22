@@ -61,6 +61,7 @@ workflows:
   version: 2
   test_all:
     jobs:
+      - checkout_code
       - nuxt:
           requires:
             - checkout_code
