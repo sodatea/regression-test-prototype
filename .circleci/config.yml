@@ -1,25 +1,25 @@
 version: 2
 jobs:
-  build:
+  nuxt:
     docker:
       - image: circleci/node:8-browsers
 
+    # TODO: read the directory from outside
     working_directory: ~/repo/nuxt.js
 
     steps:
       - checkout:
           path: ~/repo
+      - run: git submodule sync
+      - run: git submodule update --init
+
+      # TODO: get version tag automatically or make it configurable
+      - run: git checkout v1.4.1
 
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}
           - v1-dependencies-
-
-      - run: git submodule sync
-
-      - run: git submodule update --init
-
-      - run: git checkout 
 
       - run: yarn install
 
@@ -29,3 +29,38 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
 
       - run: yarn test
+
+  element:
+    docker:
+      - image: circleci/node:8-browsers
+
+    working_directory: ~/repo/element
+
+    steps:
+      - checkout:
+          path: ~/repo
+      - run: git submodule sync
+      - run: git submodule update --init
+
+      - run: git checkout v2.4.4
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.lock" }}
+          - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+
+      - run: yarn test
+
+  workflows:
+    version: 2
+    test_all:
+      jobs:
+        - nuxt
+        - element
