@@ -58,9 +58,9 @@ jobs:
 
       - run: yarn test
 
-  workflows:
-    version: 2
-    test_all:
-      jobs:
-        - nuxt
-        - element
+workflows:
+  version: 2
+  test_all:
+    jobs:
+      - nuxt
+      - element
