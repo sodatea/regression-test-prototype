@@ -6,8 +6,13 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: git submodule sync
-      - run: git submodule update --init
+      - run: |
+        git submodule sync
+        git submodule update --init
+        cd vue
+        yarn
+        yarn build
+        yarn link
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -30,15 +35,15 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}
-          - v1-dependencies-
+          - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+            - ~/.cache/yarn
+          key: v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn test
 
@@ -57,15 +62,15 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}
-          - v1-dependencies-
+          - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+            - ~/.cache/yarn
+          key: v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn test
 
