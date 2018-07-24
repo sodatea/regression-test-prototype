@@ -12,7 +12,7 @@ jobs:
             git submodule sync
             git submodule update --init
             cd vue
-            yarn install --frozen-lockfile
+            yarn install
             yarn build
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -44,7 +44,7 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
 
       - save_cache:
           paths:
