@@ -12,7 +12,7 @@ jobs:
             git submodule sync
             git submodule update --init
             cd vue
-            yarn
+            yarn install --frozen-lockfile
             yarn build
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -20,42 +20,7 @@ jobs:
             - ~/repo
             - ~/.cache/yarn
 
-  nuxt:
-    docker:
-      - image: circleci/node:8-browsers
-
-    # TODO: read the directory from outside
-    working_directory: ~/repo/nuxt.js
-
-    steps:
-      - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - run:
-          name: link
-          command:
-            cd ../vue
-            yarn link
-            cd -
-            yarn link vue
-
-      # TODO: get version tag automatically or make it configurable
-      - run: git checkout v1.4.1
-
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
-
-      - run: yarn install
-
-      - save_cache:
-          paths:
-            - node_modules
-            - ~/.cache/yarn
-          key: v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
-
-      - run: yarn test
-
+  # TODO: add nuxt.js@1.4.1, vuetify
   element:
     docker:
       - image: circleci/node:8-browsers
@@ -79,7 +44,7 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
 
       - save_cache:
           paths:
@@ -94,9 +59,6 @@ workflows:
   test_all:
     jobs:
       - checkout_code
-      - nuxt:
-          requires:
-            - checkout_code
       - element:
           requires:
             - checkout_code
