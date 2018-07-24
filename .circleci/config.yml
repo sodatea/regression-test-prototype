@@ -6,7 +6,7 @@ jobs:
     working_directory: ~/repo/element
     steps:
       - checkout:
-        path: ~/repo
+          path: ~/repo
       - run:
           name: init
           command: |
