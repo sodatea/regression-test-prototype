@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  element:
+  build:
     docker:
       - image: circleci/node:8-browsers
     working_directory: ~/repo/element
