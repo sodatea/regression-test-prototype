@@ -21,8 +21,9 @@ jobs:
             git config --global user.name "Vue Regression Bot"
 
             git submodule update --remote vue
-            git commit -am 'update vue'
-            git push
+            # if not triggered manually by vue update, git push will exit with code 1
+            git commit -am 'update vue' || test 1 = 1
+            git push || test 1 = 1
 
       - run:
           name: build
@@ -33,9 +34,9 @@ jobs:
       
       - run: git checkout v2.4.4
 
-      - restore_cache:
-          keys:
-          - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      # - restore_cache:
+      #     keys:
+      #     - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run:
           name: link
@@ -47,9 +48,9 @@ jobs:
 
       - run: yarn install
 
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-          key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      # - save_cache:
+      #     paths:
+      #       - ~/.cache/yarn
+      #     key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn test
