@@ -12,6 +12,16 @@ jobs:
           command: |
             git submodule sync
             git submodule update --init
+
+      - run:
+          name: update submodule
+          command: |
+            git submodule update --remote vue
+            git commit -am 'update vue'
+
+            - run:
+          name: build
+          command: |
             cd ../vue
             yarn install
             yarn build
