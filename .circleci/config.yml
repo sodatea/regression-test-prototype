@@ -18,8 +18,9 @@ jobs:
           command: |
             git submodule update --remote vue
             git commit -am 'update vue'
+            git push
 
-            - run:
+      - run:
           name: build
           command: |
             cd ../vue
