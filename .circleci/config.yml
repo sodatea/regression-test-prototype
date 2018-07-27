@@ -17,6 +17,9 @@ jobs:
           name: update submodule
           command: |
             cd ../
+            git config --global user.email "${GITHUB_EMAIL}"
+            git config --global user.name "Vue Regression Bot"
+
             git submodule update --remote vue
             git commit -am 'update vue'
             git push
