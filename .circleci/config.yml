@@ -75,7 +75,7 @@ jobs:
       - run: git checkout v2.4.4
 
       - attach_workspace:
-        at: ~/workspace
+          at: ~/workspace
 
       - run:
           name: link
