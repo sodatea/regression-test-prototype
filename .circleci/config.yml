@@ -104,6 +104,6 @@ workflows:
 
   test_all:
     jobs:
-      - element
+      - element:
           requires:
             - build_and_link
