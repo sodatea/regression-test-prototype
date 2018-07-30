@@ -1,50 +1,94 @@
 version: 2
-jobs:
-  build:
-    docker:
+
+defaults: &defaults
+  docker:
       - image: circleci/node:8-browsers
-    working_directory: ~/repo/element
+
+jobs:
+  update:
+    <<: *defaults
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: init
+          command: |
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: update submodule
+          command: |
+            git config --global user.email "${GITHUB_EMAIL}"
+            git config --global user.name "Vue Regression Bot"
+
+            git submodule update --remote vue
+            # if not triggered manually by vue update, git push will exit with code 1
+            git commit -am 'update vue from circleci' || test 1 = 1
+            git push || test 1 = 1
+
+  build_and_link:
+    <<: *defaults
+    working_directory: ~/repo/vue
     steps:
       - checkout:
           path: ~/repo
+
       - run:
           name: init
           command: |
             git submodule sync
             git submodule update --init
 
-      - run:
-          name: update submodule
-          command: |
-            cd ../
-            git config --global user.email "${GITHUB_EMAIL}"
-            git config --global user.name "Vue Regression Bot"
+      - restore_cache:
+          keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
 
-            git submodule update --remote vue
-            # if not triggered manually by vue update, git push will exit with code 1
-            git commit -am 'update vue' || test 1 = 1
-            git push || test 1 = 1
+      - run:
+          name: install dependencies
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: yarn-packages-{{ checksum "yarn.lock" }}
 
       - run:
           name: build
-          command: |
-            cd ../vue
-            yarn install
-            yarn build
+          command: yarn build
       
+      - run: |
+          mkdir -p ~/workspace
+          cp -R ~/repo/vue ~/workspace/vue
+
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - vue
+    
+  element:
+    <<: *defaults
+    working_directory: ~/repo/element
+    steps:
+      - checkout:
+          path: ~/repo
+
       - run: git checkout v2.4.4
 
-      # - restore_cache:
-      #     keys:
-      #     - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - attach_workspace:
+        at: ~/workspace
 
       - run:
           name: link
           command:
-            cd ../vue
+            cd ~/workspace/vue
             yarn link
             cd -
             yarn link vue
+
+      # TODO: get vue checksum from workspace
+      # - restore_cache:
+      #     keys:
+      #     - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn install
 
@@ -54,3 +98,12 @@ jobs:
       #     key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
       - run: yarn test
+
+workflows:
+  version: 2
+
+  test_all:
+    jobs:
+      - element
+          requires:
+            - build_and_link
