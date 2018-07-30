@@ -72,7 +72,7 @@ jobs:
       - checkout:
           path: ~/repo
 
-      - run: git checkout v2.4.4
+      - run: git checkout v2.4.5
 
       - attach_workspace:
           at: ~/workspace
@@ -85,17 +85,16 @@ jobs:
             cd -
             yarn link vue
 
-      # TODO: get vue checksum from workspace
-      # - restore_cache:
-      #     keys:
-      #     - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - restore_cache:
+          keys:
+          - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "~/workspace/vue/dist/vue.js" }}
 
       - run: yarn install
 
-      # - save_cache:
-      #     paths:
-      #       - ~/.cache/yarn
-      #     key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "~/workspace/vue/dist/vue.js" }}
 
       - run: yarn test
 
