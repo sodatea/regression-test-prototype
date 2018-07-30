@@ -72,6 +72,12 @@ jobs:
       - checkout:
           path: ~/repo
 
+      - run:
+          name: init
+          command: |
+            git submodule sync
+            git submodule update --init
+
       - run: git checkout v2.4.5
 
       - attach_workspace:
