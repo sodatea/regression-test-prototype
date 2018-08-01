@@ -50,6 +50,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.cache/yarn
+            - node_modules
           key: yarn-packages-v1-{{ checksum "yarn.lock" }}
 
       - run:
@@ -73,16 +74,6 @@ jobs:
           at: ~/workspace
 
       - run: git checkout v2.4.5
-      - run:
-          name: link packages
-          command: |
-            cd ../vue
-            yarn link
-            cd ./packages/vue-template-compiler/
-            yarn link
-            cd ~/workspace/repo/element/
-            yarn link vue
-            yarn link vue-template-compiler
 
       - restore_cache:
           keys:
@@ -93,7 +84,19 @@ jobs:
       - save_cache:
           paths:
             - ~/.cache/yarn
+            - node_modules
           key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+
+      - run:
+          name: link packages
+          command: |
+            cd ../vue
+            yarn link
+            cd ./packages/vue-template-compiler/
+            yarn link
+            cd ~/workspace/repo/element/
+            yarn link vue
+            yarn link vue-template-compiler
 
       - run: yarn test
 
