@@ -83,14 +83,7 @@ jobs:
           command: cp -R ~/workspace/.config ~/.config
 
       - run: git checkout v2.4.5
-
-      - run:
-          name: link
-          command:
-            cd ~/workspace/repo/vue
-            yarn link
-            cd -
-            yarn link vue
+      - run: yarn link vue
 
       - restore_cache:
           keys:
