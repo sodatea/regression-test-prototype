@@ -72,10 +72,6 @@ jobs:
       - attach_workspace:
           at: ~/workspace
 
-      - run:
-          name: restore configs
-          command: cp -R ~/workspace/.config ~/.config
-
       - run: git checkout v2.4.5
       - run: cd ../vue/ && yarn link && cd - && yarn link vue
 
