@@ -82,7 +82,7 @@ jobs:
       - run:
           name: link
           command:
-            cd ~/workspace/vue
+            cd ~/workspace/repo/vue
             yarn link
             cd -
             yarn link vue
