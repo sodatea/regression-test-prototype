@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: install dependencies
-          command: yarn install
+          command: yarn install --pure-lockfile
 
       - save_cache:
           paths:
@@ -79,7 +79,7 @@ jobs:
           keys:
           - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: yarn install
+      - run: yarn install --pure-lockfile
 
       - save_cache:
           paths:
