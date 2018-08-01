@@ -133,7 +133,8 @@ jobs:
             yarn link vue
             yarn link vue-template-compiler
 
-      - run: yarn test
+      # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
+      - run: yarn test --maxWorkers 2
 
 workflows:
   version: 2
