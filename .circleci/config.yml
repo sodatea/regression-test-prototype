@@ -75,11 +75,12 @@ jobs:
     <<: *defaults
     working_directory: ~/workspace/repo/element
     steps:
-      - checkout:
-          path: ~/workspace/repo/element
-
       - attach_workspace:
           at: ~/workspace
+
+      - run:
+          name: restore configs
+          command: cp -R ~/workspace/.config ~/.config
 
       - run: git checkout v2.4.5
 
