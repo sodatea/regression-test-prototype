@@ -1,15 +1,12 @@
 #!/bin/bash
-
-script_directory=$(cd "$(dirname "$0")/.."; pwd)
-base_directory="$(dirname "${script_directory}")"
+base_directory=$(cd "$(dirname "$0")/.."; pwd)
 working_directory="$(pwd)"
-
-echo "base ${base_directory} ${script_directory}"
 
 cd "${base_directory}/vue"
 yarn link
 
 for dir in ${base_directory}/vue/packages/*/; do
+  echo "${dir}"
   cd "${dir}"
   yarn link
 
