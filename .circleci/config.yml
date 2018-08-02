@@ -59,7 +59,7 @@ jobs:
       
       - run: |
           mkdir -p ~/workspace
-          cp -R ~/repo/ ~/workspace/repo
+          mv ~/repo/ ~/workspace/repo
 
       - persist_to_workspace:
           root: ~/workspace
