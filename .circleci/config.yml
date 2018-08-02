@@ -41,7 +41,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - yarn-packages-v1-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}
 
       - run:
           name: install dependencies
@@ -51,7 +51,7 @@ jobs:
           paths:
             - ~/.cache/yarn
             - node_modules
-          key: yarn-packages-v1-{{ checksum "yarn.lock" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}
 
       - run:
           name: build
@@ -72,33 +72,17 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
-
-      - run: git checkout v2.4.5
-
       - restore_cache:
           keys:
-          - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
-
-      - run: yarn install
-
+            - yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - run: yarn install --frozen-lockfile
       - save_cache:
           paths:
             - ~/.cache/yarn
             - node_modules
-          key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      # TODO: simplify this command
-      - run:
-          name: link packages
-          command: |
-            cd ../vue
-            yarn link
-            cd packages/vue-template-compiler/
-            yarn link
-            cd ~/workspace/repo/element/
-            yarn link vue
-            yarn link vue-template-compiler
-
+      - run: ../.circleci/link-vue-from-submodule.sh
       - run: yarn test
 
   vuetify:
@@ -107,32 +91,17 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
-
-      - run: git checkout v1.1.7
-
       - restore_cache:
           keys:
-          - yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
-
-      - run: yarn install
-
+            - yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - run: yarn install --frozen-lockfile
       - save_cache:
           paths:
             - ~/.cache/yarn
             - node_modules
-          key: yarn-packages-v1-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run:
-          name: link packages
-          command: |
-            cd ../vue
-            yarn link
-            cd packages/vue-template-compiler/
-            yarn link
-            cd ~/workspace/repo/vuetify/
-            yarn link vue
-            yarn link vue-template-compiler
-
+      - run: ../.circleci/link-vue-from-submodule.sh
       # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
       - run: yarn test --maxWorkers 2
 
