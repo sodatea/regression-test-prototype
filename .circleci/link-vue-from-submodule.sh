@@ -5,8 +5,10 @@ working_directory="$(pwd)"
 cd "${base_directory}/vue"
 yarn link
 
+cd "${working_directory}"
+yarn link vue
+
 for dir in ${base_directory}/vue/packages/*/; do
-  echo "${dir}"
   cd "${dir}"
   yarn link
 
