@@ -43,9 +43,7 @@ jobs:
           keys:
             - yarn-packages-{{ checksum "yarn.lock" }}
 
-      - run:
-          name: install dependencies
-          command: yarn install --pure-lockfile
+      - run: yarn install --pure-lockfile
 
       - save_cache:
           paths:
@@ -53,10 +51,8 @@ jobs:
             - node_modules
           key: yarn-packages-{{ checksum "yarn.lock" }}
 
-      - run:
-          name: build
-          command: yarn build
-      
+      - run: yarn build
+
       - run: |
           mkdir -p ~/workspace
           mv ~/repo/ ~/workspace/repo
@@ -65,10 +61,29 @@ jobs:
           root: ~/workspace
           paths:
             - repo
-    
+
   element:
     <<: *defaults
     working_directory: ~/workspace/repo/element
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - restore_cache:
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+            - node_modules
+          key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+
+      - run: ../.circleci/link-vue-from-submodule.sh
+      - run: yarn test
+
+  nuxt.js:
+    <<: *defaults
+    working_directory: ~/workspace/repo/nuxt.js
     steps:
       - attach_workspace:
           at: ~/workspace
@@ -112,5 +127,8 @@ workflows:
     jobs:
       - build_vue
       - vuetify:
+          requires:
+            - build_vue
+      - nuxt.js:
           requires:
             - build_vue
