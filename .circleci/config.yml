@@ -78,7 +78,7 @@ jobs:
             - node_modules
           key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: ../.circleci/link-vue-from-submodule.sh
+      - run: ../link-vue-from-submodule.sh
       - run: yarn test
 
   nuxt.js:
@@ -97,7 +97,7 @@ jobs:
             - node_modules
           key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: ../.circleci/link-vue-from-submodule.sh
+      - run: ../link-vue-from-submodule.sh
       - run: yarn test
 
   vuetify:
@@ -116,7 +116,7 @@ jobs:
             - node_modules
           key: yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
 
-      - run: ../.circleci/link-vue-from-submodule.sh
+      - run: ../link-vue-from-submodule.sh
       # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
       - run: yarn test --maxWorkers 2
 

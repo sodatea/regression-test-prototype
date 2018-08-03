@@ -1,5 +1,5 @@
 #!/bin/bash
-base_directory=$(cd "$(dirname "$0")/.."; pwd)
+base_directory=$(cd "$(dirname "$0")/"; pwd)
 working_directory="$(pwd)"
 
 cd "${base_directory}/vue"
