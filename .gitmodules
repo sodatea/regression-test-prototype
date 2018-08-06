@@ -10,4 +10,3 @@
 [submodule "vue"]
 	path = vue
 	url = https://github.com/sodatea/vue.git
-	branch = regression-test

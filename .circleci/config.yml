@@ -35,7 +35,6 @@ jobs:
           command: |
             git submodule sync
             git submodule update --init
-      - run: echo $VUE_REVISION
       - run:
           name: update submodule
           command: |
@@ -43,7 +42,10 @@ jobs:
             git config --global user.name "Vue Regression Bot"
 
             git submodule update --remote vue
-            # if not triggered manually by vue update, git push will exit with code 1
+            cd vue && git checkout $VUE_REVISION
+
+            # if VUE_REVISION has not changed since last update,
+            # git push will exit with code 1 and test will fail
             git commit -am 'update vue from circleci' || test 1 = 1
             git push || test 1 = 1
 
