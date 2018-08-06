@@ -35,6 +35,7 @@ jobs:
           command: |
             git submodule sync
             git submodule update --init
+      - run: echo $VUE_REVISION
       - run:
           name: update submodule
           command: |
